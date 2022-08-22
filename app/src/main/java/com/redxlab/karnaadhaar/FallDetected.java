@@ -67,14 +67,6 @@ public class FallDetected extends FragmentActivity implements OnMapReadyCallback
                         .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        //        getting location permissions -- in app permissions
-        try {
-            if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 101);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         fusedLocationClient.getLastLocation().addOnSuccessListener(FallDetected.this, new OnSuccessListener<Location>() {
             @Override
@@ -126,19 +118,21 @@ public class FallDetected extends FragmentActivity implements OnMapReadyCallback
 
     private void sendMessageToContacts() {
 //        TODO:send message to contacts with location
-        // For testing Jay vanjare's
+        // For testing Jay vanjare's number
         number="8850008536";
-        msg=String.valueOf(location_lat_log.latitude)+"\t"+String.valueOf(location_lat_log.longitude);
+        // For testing Akshay Patil's number
+//        number="9869318062";
+        msg="Fall detected! : Person X's location : Click here to open on google Maps: https://www.google.com/maps/@"+String.valueOf(location_lat_log.latitude)+","+String.valueOf(location_lat_log.longitude)+"z";
         Log.d(TAG, "sendMessageToContacts: msg: "+msg);
         try {
             SmsManager smsManager=SmsManager.getDefault();
             smsManager.sendTextMessage(number,null,msg,null,null);
-            Toast.makeText(getApplicationContext(),"Message Sent",Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),"Message Sent to Emergency Contacts",Toast.LENGTH_LONG).show();
         }catch (Exception e)
         {
-            Toast.makeText(getApplicationContext(),"Some field is Empty",Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),"Failed to send message",Toast.LENGTH_LONG).show();
         }
-        Toast.makeText(this,"Message sent to Emergency Contacts",Toast.LENGTH_LONG).show();
+
     }
 
     public boolean checkLocationPermission() {
