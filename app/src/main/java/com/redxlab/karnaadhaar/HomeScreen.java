@@ -4,13 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.View;
 import android.widget.TextView;
 
 public class HomeScreen extends AppCompatActivity {
     private static final String TAG="Home Screen";
-    private TextView homeScreen;
+    private TextView homeScreen,counter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,16 +20,21 @@ public class HomeScreen extends AppCompatActivity {
         setContentView(R.layout.activity_home_screen);
 
         homeScreen=findViewById(R.id.fallSimulationBTN);
+        counter=findViewById(R.id.idCounter);
 
-        homeScreen.setOnClickListener(v->{
-            final Handler handler = new Handler(Looper.getMainLooper());
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    startActivity(new Intent(getApplicationContext(),FallDetected.class));
+        homeScreen.setOnClickListener(v-> {
+            new CountDownTimer(5000, 1000) {
+
+                public void onTick(long millisUntilFinished) {
+                    counter.setText(String.valueOf(millisUntilFinished / 1000));
+
                 }
-            }, 10000);
 
+                public void onFinish() {
+                    startActivity(new Intent(getApplicationContext(), FallDetected.class));
+                }
+
+            }.start();
         });
 
     }

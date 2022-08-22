@@ -12,5 +12,13 @@
         android:text="Home Page \n Touch anywhere to simulate fall in 10 seconds"
         android:textAlignment="center"
         android:gravity="center"/>
+    <TextView
+        android:id="@+id/idCounter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="0"
+        android:textSize="50sp"
+        android:textAlignment="viewEnd"/>
 
 </RelativeLayout>

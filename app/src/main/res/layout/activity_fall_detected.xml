@@ -19,19 +19,34 @@
         android:id="@+id/idFallAlertImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/fallalert"
         android:layout_below="@+id/idFallDetectedHeader"
-        android:layout_margin="10dp"/>
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/fallalert" />
+
     <TextView
         android:id="@+id/idTimer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/idFallDetectedHeader"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="60dp"
         android:text="0"
-        android:textSize="80dp"
         android:textAlignment="center"
-        android:textColor="@color/black"/>
+        android:textColor="@color/black"
+        android:textSize="100dp" />
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/idFallAlertImage"
+        android:layout_margin="10dp"/>
 
 
 
