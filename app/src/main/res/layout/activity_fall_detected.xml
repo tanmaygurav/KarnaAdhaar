@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FallDetected">
+
+    <TextView
+        android:id="@+id/idFallDetectedHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Fall Detected"
+        android:textAlignment="center"
+        android:textSize="45dp"
+        android:layout_margin="10dp"/>
+
+    <ImageView
+        android:id="@+id/idFallAlertImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/fallalert"
+        android:layout_below="@+id/idFallDetectedHeader"
+        android:layout_margin="10dp"/>
+    <TextView
+        android:id="@+id/idTimer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/idFallDetectedHeader"
+        android:layout_marginTop="80dp"
+        android:text="0"
+        android:textSize="80dp"
+        android:textAlignment="center"
+        android:textColor="@color/black"/>
+
+
+
+
+
+</RelativeLayout>
