@@ -13,36 +13,51 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_SEND_SMS = 123;
-    private TextView navigate;
+    private TextView fallDetectedText;
     SharedPreferences permissionStatus;
     private boolean sentToSettings = false;
     private static final int SMS_PERMISSION_CONSTANT = 100;
     private static final int REQUEST_PERMISSION_SETTING = 101;
+    private Button addEmeContact;
+    private String fallDetected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        navigate=findViewById(R.id.idNavigate);
+        fallDetectedText=findViewById(R.id.idFallDetectedIndicator);
+        addEmeContact=findViewById(R.id.idAddEmeContactActivity);
 
-        navigate.setOnClickListener(v->{
+        loadData();
+        refreshViews();
+//        Change fall detected indicator
+
+
+        fallDetectedText.setOnClickListener(v->{
             startActivity(new Intent(getApplicationContext(),HomeScreen.class));
+        });
+        fallDetectedText.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                fallDetected="false";
+                saveData();
+                refreshViews();
+                return true;
+            }
         });
 
         //        getting location permissions -- in app permissions
         getlocationpermission();
         getsmspermission();
 
-
-//        getting sms permission
-        // check permission is given
-        permissionStatus = getSharedPreferences("permissionStatus", MODE_PRIVATE);
 //        try {
 //            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
 //                // request permission (see result in onRequestPermissionsResult() method)
@@ -53,6 +68,24 @@ public class MainActivity extends AppCompatActivity {
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
+
+    }
+
+    private void refreshViews() {
+        if (fallDetected=="true"){
+            fallDetectedText.setText("Fall Detected");
+            fallDetectedText.setTextColor(getResources().getColor(R.color.red));
+        }else {
+            fallDetectedText.setText("Fall Not Detected");
+            fallDetectedText.setTextColor(getResources().getColor(R.color.green));
+        }
+        addEmeContact.setOnClickListener(v->{
+            startActivity(new Intent(getApplicationContext(),EmergencyContacts.class));
+        });
+    }
+
+    private void getsmspermission() {
+        permissionStatus = getSharedPreferences("permissionStatus", MODE_PRIVATE);
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.SEND_SMS)
                 != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.SEND_SMS)) {
@@ -110,9 +143,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void getsmspermission() {
-    }
-
     private void getlocationpermission() {
         try {
             if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -120,6 +150,30 @@ public class MainActivity extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void loadData() {
+        try {
+            SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+            fallDetected=sharedPreferences.getString("fallDetected", null);
+            // after loading data we are displaying a toast message.
+            Toast.makeText(this, "Loaded fallDetected from Shared preferences. ", Toast.LENGTH_LONG).show();
+        }catch (Exception e){
+            Toast.makeText(this, "Error while loading : "+e, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void saveData() {
+        try {
+            SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("fallDetected", fallDetected);
+            editor.apply();
+            // after saving data we are displaying a toast message.
+            Toast.makeText(this, "Saved fallDetected to Shared preferences. ", Toast.LENGTH_LONG).show();
+        }catch (Exception e){
+            Toast.makeText(this, "Error while saving : "+e, Toast.LENGTH_LONG).show();
         }
     }
 }

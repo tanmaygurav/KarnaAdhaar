@@ -9,7 +9,7 @@
         android:id="@+id/fallSimulationBTN"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Home Page \n Touch anywhere to simulate fall in 10 seconds"
+        android:text="Home Page \n Touch anywhere to simulate fall"
         android:textAlignment="center"
         android:gravity="center"/>
     <TextView

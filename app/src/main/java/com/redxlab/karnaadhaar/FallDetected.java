@@ -8,6 +8,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -19,6 +21,7 @@ import android.os.CountDownTimer;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,7 +54,8 @@ public class FallDetected extends FragmentActivity implements OnMapReadyCallback
     private ImageView alertImage;
     private boolean alertMark=true;
     private String number,msg;
-
+    private Button safeBTN;
+    public String sendMSG="true",fallDetected="true";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +63,16 @@ public class FallDetected extends FragmentActivity implements OnMapReadyCallback
 
         timer=findViewById(R.id.idTimer);
         alertImage=findViewById(R.id.idFallAlertImage);
+        safeBTN=findViewById(R.id.idSafeBTN);
+
+
+        loadData();
+        safeBTN.setOnClickListener(v->{
+            sendMSG="false";
+            fallDetected="true";
+            saveData();
+            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+        });
 
 //        Map - Location Code
         FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -109,6 +123,7 @@ public class FallDetected extends FragmentActivity implements OnMapReadyCallback
         }.start();
     }
 
+
     private void moveCameratoLocation(LatLng location_lat_log) {
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(location_lat_log)
@@ -119,19 +134,22 @@ public class FallDetected extends FragmentActivity implements OnMapReadyCallback
     private void sendMessageToContacts() {
 //        TODO:send message to contacts with location
         // For testing Jay vanjare's number
-        number="8850008536";
+//        number="8850008536";
         // For testing Akshay Patil's number
 //        number="9869318062";
         msg="Fall detected! : Person X's location : Click here to open on google Maps: https://www.google.com/maps/@"+String.valueOf(location_lat_log.latitude)+","+String.valueOf(location_lat_log.longitude)+"z";
         Log.d(TAG, "sendMessageToContacts: msg: "+msg);
-        try {
-            SmsManager smsManager=SmsManager.getDefault();
-            smsManager.sendTextMessage(number,null,msg,null,null);
-            Toast.makeText(getApplicationContext(),"Message Sent to Emergency Contacts",Toast.LENGTH_LONG).show();
-        }catch (Exception e)
-        {
-            Toast.makeText(getApplicationContext(),"Failed to send message",Toast.LENGTH_LONG).show();
+        if (sendMSG=="true"){
+            try {
+                SmsManager smsManager=SmsManager.getDefault();
+                smsManager.sendTextMessage(number,null,msg,null,null);
+                Toast.makeText(getApplicationContext(),"Message Sent to Emergency Contacts",Toast.LENGTH_LONG).show();
+            }catch (Exception e)
+            {
+                Toast.makeText(getApplicationContext(),"Failed to send message",Toast.LENGTH_LONG).show();
+            }
         }
+
 
     }
 
@@ -163,6 +181,30 @@ public class FallDetected extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
+    }
+    private void loadData() {
+        try {
+            SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+            sendMSG=sharedPreferences.getString("sendMSG", "true");
+            number=sharedPreferences.getString("Number", null);
+            // after loading data we are displaying a toast message.
+            Toast.makeText(this, "Loaded sendMSG from Shared preferences. ", Toast.LENGTH_LONG).show();
+        }catch (Exception e){
+            Toast.makeText(this, "Error while loading : "+e, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void saveData() {
+        try {
+            SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("fallDetected", fallDetected);
+            editor.apply();
+            // after saving data we are displaying a toast message.
+            Toast.makeText(this, "Saved fallDetected to Shared preferences. ", Toast.LENGTH_LONG).show();
+        }catch (Exception e){
+            Toast.makeText(this, "Error while saving : "+e, Toast.LENGTH_LONG).show();
+        }
     }
 
 }
