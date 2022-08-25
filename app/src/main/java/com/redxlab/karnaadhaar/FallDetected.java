@@ -15,6 +15,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationRequest;
 import android.media.Image;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -38,6 +39,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.io.IOException;
 
 public class FallDetected extends FragmentActivity implements OnMapReadyCallback{
     private static final String TAG="Fall Detected";
@@ -73,6 +76,18 @@ public class FallDetected extends FragmentActivity implements OnMapReadyCallback
             saveData();
             startActivity(new Intent(getApplicationContext(),MainActivity.class));
         });
+
+//        Buzzer code
+        MediaPlayer mp= MediaPlayer.create(this,R.raw.buzzer);
+        try {
+//            mp.prepare();
+            mp.start();
+            mp.setLooping(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(),"error in audio : "+e,Toast.LENGTH_SHORT).show();
+        }
+//        End Buzzer code
 
 //        Map - Location Code
         FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
