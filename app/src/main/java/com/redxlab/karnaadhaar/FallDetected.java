@@ -3,6 +3,7 @@ package com.redxlab.karnaadhaar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -16,6 +17,7 @@ import android.location.LocationListener;
 import android.location.LocationRequest;
 import android.media.Image;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -45,10 +47,6 @@ import java.io.IOException;
 public class FallDetected extends FragmentActivity implements OnMapReadyCallback{
     private static final String TAG="Fall Detected";
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    GoogleApiClient mGoogleApiClient;
-    Location mLastLocation;
-    Marker mCurrLocationMarker;
-    LocationRequest mLocationRequest;
     private Double longitude, latitude;
     private LatLng location_lat_log;
     private Location location_var;
@@ -59,6 +57,7 @@ public class FallDetected extends FragmentActivity implements OnMapReadyCallback
     private String number,msg;
     private Button safeBTN;
     public String sendMSG="true",fallDetected="true";
+    private CardView batteryCheck;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,6 +121,7 @@ public class FallDetected extends FragmentActivity implements OnMapReadyCallback
 
             public void onTick(long millisUntilFinished) {
                 timer.setText(String.valueOf( millisUntilFinished / 1000));
+//                alert image blinking code
                 if (alertMark){
                     alertImage.setVisibility(View.VISIBLE);
                     alertMark=false;
@@ -159,6 +159,25 @@ public class FallDetected extends FragmentActivity implements OnMapReadyCallback
                 SmsManager smsManager=SmsManager.getDefault();
                 smsManager.sendTextMessage(number,null,msg,null,null);
                 Toast.makeText(getApplicationContext(),"Message Sent to Emergency Contacts",Toast.LENGTH_LONG).show();
+//                automate call code - call after some time of msg sent
+                new CountDownTimer(5000, 1000) {
+                    public void onTick(long millisUntilFinished) {
+                        timer.setText(String.valueOf( millisUntilFinished / 1000));
+//                        alert image blinking code
+                        if (alertMark){
+                            alertImage.setVisibility(View.VISIBLE);
+                            alertMark=false;
+                        }else {
+                            alertImage.setVisibility(View.INVISIBLE);
+                            alertMark=true;
+                        }
+                    }
+
+                    public void onFinish() {
+                        callEmergencyContact();
+                    }
+
+                }.start();
             }catch (Exception e)
             {
                 Toast.makeText(getApplicationContext(),"Failed to send message",Toast.LENGTH_LONG).show();
@@ -166,6 +185,11 @@ public class FallDetected extends FragmentActivity implements OnMapReadyCallback
         }
 
 
+    }
+
+    private void callEmergencyContact() {
+        Intent intent = new Intent(Intent.ACTION_DIAL,Uri.fromParts("tel",number,null));
+        startActivity(intent);
     }
 
     public boolean checkLocationPermission() {

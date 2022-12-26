@@ -27,8 +27,6 @@ public class EmergencyContacts extends AppCompatActivity {
         saveContactBTN=findViewById(R.id.idSaveContactBTN);
 
         loadData();
-
-        
         saveContactBTN.setOnClickListener(v->{
             saveData();
         });
